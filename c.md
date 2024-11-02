@@ -76,8 +76,6 @@ int main(int argc, char **argv){
 
 
 
-
-
 `KEYWORDS`
 
 ---
@@ -133,7 +131,98 @@ int main( int argc, char *argv[] ){
 
 `static 变量只会在其第一次进入作用域时被定义 变量 k 不会被重复定义 它只会在第一次进入循环时被初始化为 0 然后在后续的迭代中保持其值直到函数结束或 k 被显式地修改 其实每次循环迭代时都尝试给 static 变量一个初始值 static int k = 0 这实际上是语法上不允许的尽管一些编译器可能会接受它并只在实际进入作用域时初始化一次但更好的做法是避免这种写法以避免潜在的警告或错误`
 
+`! 静态全局变量`
 
+`当 static 修饰全局变量时 它会限制全局变量的作用域使其只能在声明它的源文件或编译单元内部被访问 这有助于封装数据防止不同模块之间的直接依赖 静态全局变量在程序的整个运行期间保持其值但它们不会像普通全局变量那样被其他文件访问或修改`
+
+```c
+static int i = 0;
+int main(int argc, char *argv[]) {
+    return 0;
+}
+```
+
+`! 静态函数`
+
+`当 static 修饰函数时 它会限制函数的作用域 使其只能在声明它的源文件或编译单元内部被调用 这有助于隐藏实现细节减少命名冲突 并提高程序的模块化程度` `非静态函数 即 默认情况下定义的函数 具有外部链接性 external linkage 这意味着它们可以在程序的其他部分甚至是在其他编译单元或源文件中 被引用和调用` `静态函数则具有内部链接性 internal linkage 也称为文件作用域 file scope 这意味着静态函数只能在声明它的源文件内部被调用其他源文件无法看到或调用这个函数即使它们包含了相同的头文件`
+
+```c
+extern void static_function();
+extern void call_static_function();
+
+int main() {
+    call_static_function();
+    static_function(); -- 无法调用 static 函数
+    return 0;
+} -- 1.c
+```
+
+```c
+#include <stdio.h>
+
+static void static_function() {
+    printf("static function\n");
+}
+
+void call_static_function() {
+    static_function();
+} -- 2.c
+```
+
+```c
+#include "2.c" -- 将一个源文件直接包含到另一个源文件中将导致 2.c 的所有内容 包括 static 函数定义都被复制到中 1.c 中
+  
+int main() {
+    call_static_function();
+    static_function();
+    return 0;
+} -- 1.c
+```
+
+```c
+#include <stdio.h>
+
+static void static_function() {
+    printf("static function\n");
+}
+
+void call_static_function() {
+    static_function();
+} -- 2.c
+```
+
+`? extern`
+
+
+
+```c
+#include <stdio.h>
+#include "global.h"
+
+int i = 0; -- 全局变量i的定义和初始化
+
+int main(int argc, char *argv[]) {
+    return 0;
+} -- 1.c
+```
+
+```c
+#ifndef GLOBAL_H
+#define GLOBAL_H
+
+extern int i; -- 声明全局变量 i 告诉编译器 i 是在其他地方定义的
+    
+#endif -- global.h
+```
+
+```c
+#include <stdio.h>  
+#include "global.h" -- 包含全局变量的声明头文件  
+  
+int return_i() {  
+    return i; -- 在这里可以访问全局变量 i  
+} -- 2.c
+```
 
 
 
