@@ -193,13 +193,13 @@ void call_static_function() {
 
 `? extern`
 
-
+`extern 存储类用于定义在其他文件中声明的全局变量或函数 当使用 extern 关键字时不会为变量分配任何存储空间而只是指示编译器该变量在其他文件中定义 全局变量对所有的程序文件都是可见 extern 存储类用于提供一个全局变量的引用`
 
 ```c
 #include <stdio.h>
 #include "global.h"
 
-int i = 0; -- 全局变量i的定义和初始化
+int i = 0; -- 全局变量 i 的定义和初始化
 
 int main(int argc, char *argv[]) {
     return 0;
@@ -356,7 +356,7 @@ int return_i() {
 
 
 
-
+变量的“定义”是分配内存空间并可能设置初始值的过程。而“声明”只是告诉编译器变量的类型和名称，但不分配内存（对于`extern`声明的变量来说）。一个变量只能有一个定义，但可以有多个声明。
 
 
 
