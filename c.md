@@ -1016,6 +1016,29 @@ int lcm(int i1, int i2, int gcd_value) { -- 计算最小公倍数的函数
 }
 ```
 
+```c
+int* cnt_rev(int i1){
+    int cnt = 0, occas = i1;  
+    while (occas != 0) {  
+        occas /= 10;  
+        ++cnt;  
+    }  
+
+    int digit = 0, rev = 0; occas = i1;  
+    while (occas != 0) {  
+        digit = occas % 10;  
+        rev = rev * 10 + digit;
+        occas /= 10;  
+    }
+    
+    static int arr[2] = {};
+    arr[0] = cnt;
+    arr[1] = rev;
+    
+    return arr;
+}   
+```
+
 `? do while`
 
 ```c
@@ -1024,8 +1047,6 @@ do{
 	改变初始值
 } while(表达式)
 ```
-
-
 
 `? for`
 
