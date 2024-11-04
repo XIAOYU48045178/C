@@ -1298,6 +1298,41 @@ bool fun(int a[],int size){
 }
 ```
 
+`! 最值和最值下标`
+
+```c
+int a[4] = {1, 2, 3, 4};
+
+int max = a[0]; int imax = 0;
+
+for(int i = 1; i <= 4; i++){
+    max = max > a[i] ? max : a[i];
+    imax = max == a[i] ? i : imax;
+}
+```
+
+`! 不重复随机数`
+
+```c
+#include<stdlib.h>
+#include<time.h>
+
+int noRepeatRandom(int *arr, int size){
+    srand(time(0));
+
+    for(int i = 0; i < size; i++){
+        arr[i] = rand() % 35 + 1;
+        for(int j = 0; j < i; j++){
+            if(arr[j] == arr[i]){
+                i--;
+                break;
+            }
+        }    
+    }
+	return 1;
+}
+```
+
 
 
 
