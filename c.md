@@ -1264,7 +1264,39 @@ bool bubbleSort(int arr[], int size) {
 }  
 ```
 
+`? 交换排序`
 
+```c
+bool fun(int a[],int size){
+    for(int i = 0; i < size - 1; i++){ -- 控制 a[i] 的下标变换
+        for(int j = i + 1; j < size; j++){ -- 控制每一轮的内部比较过程
+            if(a[i]>a[j]){   
+                int k = a[i]; a[i] = a[j]; a[j] = k; 
+            }
+        } 
+    }
+    return 1;
+}
+```
+
+`? 选择排序`
+
+```c
+bool fun(int a[],int size){
+    for(int i = 0; i < size - 1; i++){ -- 控制 a[i] 下标变化
+        int k = i; -- 最下值下标
+        for(int j = i + 1; j < size; j++){
+            if(a[k] > a[j]){
+               k = j;  
+            }
+        }
+        if(k != i){
+             int it = a[i]; a[i] = a[k]; a[k] = it;
+        }
+    }
+    return 0;
+}
+```
 
 
 
