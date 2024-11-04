@@ -2,11 +2,15 @@
 
 ---
 
+`? 不标准的主函数`
+
 ```c
 int main(){ -- 不标准的主函数 有且只有一个 程序由主函数开始执行
 	return 0; -- 返回值通常是 0 表示正常执行
 }
 ```
+
+`? 标准的主函数`
 
 ```c
 int main( int argc, char *argv[] ){ -- 标准的主函数
@@ -126,7 +130,7 @@ int main( int argc, char *argv[] ){
     for ( i = 0; i < 3; ++i) {
         static int k = 0; -- static int k
         k += i;
-        -- k = 0 1 3
+        -- k = 0 1 3 无 static k = 0 1 2 
     }
     -- 注意：k 的作用域在这里已经结束 但它的生命周期会持续到程序结束
     return 0;
@@ -685,20 +689,13 @@ int main(){
 
 `long long C99 标准引入 8 字节 64 位 取值范围: 有符号 -2^63 ~ 2^63-1 无符号 0 ~ 2^64-1`
 
+`! 整数拆分`
+
 ```c
 int i1 = 21, i2 = 321, i3 = 4321;
 i1 % 10; i1 / 10 % 10;
 i2 % 10; i2 / 10 % 10; i2 / 100 % 10;
 i3 % 10; i3 / 10 % 10; i3 / 100 % 10; i3 / 1000 % 10;
-```
-
-```c
-int main(){
-    int i = 5; int j = 5;
-    for (i; ++i != 5 ; 0) { } -- 延时 i = 5 int 有范围 过了从头再来
-    for (j; j++ != 5 ; 0) { } -- 不延时 j = 6
-    return 0;    
-}
 ```
 
 `? 浮点型` 
@@ -717,6 +714,17 @@ int main(){
 '0' <= c && c <= '9'
 'A' <= c && c <= 'Z'
 'a' <= c && c <= 'z'
+```
+
+`? 范围介绍`
+
+```c
+int main(){
+    int i = 5; int j = 5;
+    for (i; ++i != 5 ; 0) { } -- 延时 i = 5 int 有范围 过了从头再来
+    for (j; j++ != 5 ; 0) { } -- 不延时 j = 6
+    return 0;    
+}
 ```
 
 
@@ -924,12 +932,16 @@ int main(){
 }
 ```
 
-```c
-if(i1 + i2 + i3 - max - max > 0) -- 三角形两边之和大于第三边
-```
+`! 三角形两边之和大于第三边`
 
 ```c
-int main() { -- 1 秒后时间
+if(i1 + i2 + i3 - max - max > 0)
+```
+
+`! 1 秒后时间`
+
+```c
+int main() {
     int i1 = 12, i2 = 24, i3 = 59;  
     if( i1 < 0 || i1 > 23 || i2 < 0 || i2 > 59 || i3 < 0 || i3 > 59){
         return 0;
@@ -996,6 +1008,8 @@ while(表达式){
 }
 ```
 
+`! 最大公约数 最小公倍数`
+
 ```c
 int gcd(int i1, int i2) { -- 计算最大公约数的函数欧几里得算法
 	int i3 = 0
@@ -1011,6 +1025,8 @@ int lcm(int i1, int i2, int gcd_value) { -- 计算最小公倍数的函数
     return (i1 / gcd_value) * i2;  
 }
 ```
+
+`! 逆序数`
 
 ```c
 int* cnt_rev(int i1){
@@ -1050,6 +1066,8 @@ do{
 for(定义初始变量; 条件判断; 改变初始值){ }
 ```
 
+`! Prime`
+
 ```c
 #include <stdbool.h>  
    
@@ -1076,8 +1094,10 @@ int isPrime(int i1){
 }
 ```
 
+`! 打印金字塔`
+
 ```c
-int main() { -- 打印金字塔
+int main() { 
     int row = 5;
     int i = 1; j = 1;
     int space = 0, star = 0;  
@@ -1096,6 +1116,8 @@ int main() { -- 打印金字塔
 }
 ```
 
+`! factorial`
+
 ```c
 unsigned long long factorial(int num) {  
     unsigned long long result = 1;  
@@ -1105,6 +1127,8 @@ unsigned long long factorial(int num) {
     return result;  
 }
 ```
+
+
 
 `Break Continue`
 
@@ -1137,6 +1161,118 @@ int main(){
 `ARR`
 
 ---
+
+`数组数据结构 它可以存储一个固定大小的相同类型元素的顺序集合` `数组中的特定元素可以通过索引访问 第一个索引值为 0` `数组都是由连续的内存位置组成 最低的地址对应第一个元素最高的地址对应最后一个元素` `数组名即数组首地址`
+
+`? 定义数组`
+
+`需要指定元素的类型和元素的数量` `下标最大值为元素数量 - 1` `一维数组 arrSize 必须是一个大于零的整数常量 数据类型可以是任意有效的数据类型`
+
+`? 初始化数组`
+
+`! 完全初始化` `指定数量 double balance[5] = { 1000.0, 2.0, 3.4, 7.0, 50.0 };` `通过初始化值的数量隐式推断 double balance[] = { 1000.0, 2.0 }`  `数组定义中通常建议明确指定数组大小` 
+
+`! 部分初始化 对于静态存储期的数组 全局数组或静态数组 只提供部分初始化值未指定的元素将自动初始化为 0` `double balance[5] = { 1000.0, 2.0 }` `double balance[5] = {}`
+
+`! 指定索引的初始化 C99 标准引入了指定索引的初始化方式 允许在初始化时直接设置数组中特定索引位置的值` `int arr[10] = {[0] = 1, [2] = 3, [5] = 7}; ` `对于静态存储期的数组未明确初始化的元素将自动初始化为 0`
+
+`! 字符数组的初始化 字符数组字符串可以通过字符串字面量进行初始化 空字符 在字面量最后 '\0' 将用于初始化数组` `char str[] = "Hello World!"`
+
+`! 静态数组的初始化 对于静态存储期的数组如全局数组或静态数组 初始化规则与自动数组相同 但静态存储期的数组在程序开始执行之前就已经被初始化`
+
+`! 未初始化的数组 未初始化元素值不确定` `int arr[10]`
+
+`! 为数组中某个元素赋值` `balance[4] = 50.0;`
+
+`? 访问数组元素`
+
+`数组元素可以通过数组名称加索引进行访问 元素的索引是放在方括号内跟在数组名称的后边` `为数组中某个元素赋值` `balance[4] = 50.0;`
+
+```c
+int arr[] = {1, 2, 3, 4, 5};
+int length = sizeof(arr) / sizeof(arr[0]); -- 5
+```
+
+`? 数组名`
+
+`在 C 语言中数组名表示数组首元素的地址 当我们在 statement 和定义一个数组时 该数组名就代表着该数组的地址 数组名是一个常量指针不能被改变 int* const arr`
+
+```c
+int arr[2] = { 1, 2 };
+*(arr + 1)); -- 正确
+*(++arr); -- 错误
+```
+
+`! 数组逆序`
+
+```c
+bool reverseArr(int arr[], int size) {  
+    int start = 0;  
+    int end = size - 1;  
+    int i = 0; -- 缺点: 生命周期长 优点: 不必每次循环重新向内存申请空间 只申请访问赋值权限速度快
+    while (start < end) {  
+
+        i = arr[start];  
+        arr[start] = arr[end];  
+        arr[end] = i;  
+  
+        start++;  
+        end--;  
+    }  
+    return true;
+}
+```
+
+`! Fibonacci`
+
+```c
+int main(){ -- Fibonacci 30 以上递归 30 以下迭代
+    int arr[31] = {1, 1};
+    for(int i = 2; i < 30; i++){
+        arr[i] = arr[i - 1] + arr[i -2];
+    }
+    return 0;
+}
+```
+
+```c
+void fibonacci(int fib[],int size){
+	fib[0] = 1;
+	fib[1] = 1;
+	for(int i = 2; i < size; i++){
+		fib[i] = fib[i - 1] + fib[i - 2];
+	}
+}
+```
+
+`? Bubble`
+
+`原理：每次两个数进行比较 从数组的前两个元素开始 如果前面的数>后面的数 就交换 第一趟会求出一个最大值 并且放在最后面 然后依此类推 经过最多 N-1 趟 排好序`
+
+```c
+bool bubbleSort(int arr[], int size) {   
+    for (int i = 0; i < size-1; i++) {        
+        for (int j = 0; j < size-i-1; j++) {  
+            if (arr[j] > arr[j+1]) { 
+                arr[j] = arr[j] ^ arr[j + 1];
+                arr[j + 1] = arr[j] ^ arr[j + 1];
+                arr[j] = arr[j] ^ arr[j + 1]; 
+            }  
+        }  
+    }  
+    return true;
+}  
+```
+
+
+
+
+
+
+
+
+
+
 
 
 
