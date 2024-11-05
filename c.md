@@ -34,7 +34,7 @@ int main(int argc, char **argv){
 
 `? char *argv[] vs char **argv`
 
- `char *argv[] 字符指针数组 char **argv 指向指针的指针`
+ `char *argv[] 字符指针数组 数组元素是指针 char **argv 指向字符数组指针的指针`
 
 `char *argv[] 和 char **argv 在函数参数中是等价的 它们都表示一个指向指针的指针 那个指针指向字符串 argv[] 在作为函数参数时会被编译器解释为指向数组首元素的常量指针`
 
@@ -1451,12 +1451,12 @@ free(arr);
 
 `? 数组指针 指针数组`
 
-`指针数组: 指针数组是一个数组 其每个元素都是指针可以指向不同的内存位置`
+`指针数组: 指针数组是一个数组 每个元素都是指针可以指向不同的内存位置`
 
-`! 字符串数组`
+`! 字符串数组` `字符指针数组`
 
 ```c
-char *fruits[] = { "html", "css", "javascript" }; 
+char *args[] = { "html", "css", "javascript" }; 
 ```
 
 `! 指向整型数组的指针数组`
@@ -1494,7 +1494,7 @@ for (int i = 0; i < arr_out; i++) {
         return 1;
     }
     
-    for (int j = 0; j < arr_in; j++) {  
+    for (int j = 0; j < arr_in; j++) { -- 赋值
         arr[i][j] = i + j;  
     }  
 }  
