@@ -1764,13 +1764,41 @@ int fibonaci(int i){ -- 30 以上递归
 }
 ```
 
-`? 可变参数` ...
-
-```c
-int fun(int arg1, ...)
-```
+`? 可变参数` 
 
 `省略号之前的那个参数是 int 代表了要传递的可变参数的总数`
+
+```c
+#include <stdarg.h>
+int* storage(int iargs, ...) {
+    static int arr[10] = {};
+    va_list args; -- 定义一个 va_list 类型的变量访问可变参数列表
+
+    va_start(args, iargs); -- 初始化 args 使其指向第一个可变参数
+
+    int i = 0;
+    for (i; i < iargs; i++) {      
+        int value = va_arg(args, int); -- 获取当前参数的值
+        arr[i] = value;
+    }
+    
+    va_end(args); -- 清理 va_list 变量
+
+    return arr;
+}
+
+int main() {
+
+    int* result1 = storage(3, 1, 2, 3); -- 可变参数函数传入不同数量的整数参数
+    
+    int i = 0;
+    for(i; i< 3; ++i){
+		-- *(result1+i)
+    }
+
+    return 0;
+}
+```
 
 
 
