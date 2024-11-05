@@ -1460,20 +1460,36 @@ int *arr[] = {arr1, arr2, arr3};
 ```
 
 ```c
-int num_arr = 3;  
-int arr_size = 3;   
-int **arr = (int **)malloc(num_arr * sizeof(int *)); 
+int arr_out = 3;  
+int arr_in = 3;  
 
-for (int i = 0; i < num_arr; i++) {  
-    arr[i] = (int *)malloc(arr_size * sizeof(int));  
-    for (int j = 0; j < arr_size; j++) {  
+int **arr = (int **)malloc(arr_out * sizeof(int *)); 
+
+if (arr == NULL) {    
+    return 1;
+}
+
+for (int i = 0; i < arr_out; i++) {  
+    
+    arr[i] = (int *)malloc(arr_in * sizeof(int)); 
+    
+    if (arr[i] == NULL) {
+    	for (j = 0; j < i; j++) {
+        	free(arr[j]);
+        }
+        free(arr);
+        return 1;
+    }
+    
+    for (int j = 0; j < arr_in; j++) {  
         arr[i][j] = i + j;  
     }  
 }  
 
-for (int i = 0; i < num_arr; i++) {  
+for (int i = 0; i < arr_out; i++) {  
     free(arr[i]);  
 }  
+
 free(arr); 
 ```
 
