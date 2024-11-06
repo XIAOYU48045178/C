@@ -1293,15 +1293,71 @@ int arr[2] = { 1, 2 };
 *(++arr) -- 错误
 ```
 
+`? 数组指针 指针数组` 
+
+`指针数组: 指针数组是一个数组 数组元素是指针可以指向不同的内存位置 数组指针: 数组指针是指针 指向数组 数组中的元素在内存中连续` `是 …… 看 after `
+
+`! 字符串数组` `字符指针数组`
+
 ```c
-int arr1[2] = {1, 2};
-int arr2[2][2] = { {1, 2}, arr1[0], arr1[1] }; -- i i + 1 j + 1 k + 1 000000974A7FF990 000000974A7FF998 000000974A7FF994 000000974A7FF994
-int (*i)[2] = arr2; -- 指向具有 2 个int元素的数组的指针
-int* j = arr2[0]; -- 指向 int 的指针指向第一行
-int* k = &arr2[0][0]; -- 指向二维数组元素的指针 00000026297FF7A0 00000026297FF7A0 00000026297FF7A0
+char *args[] = { "html", "css", "javascript" }; 
 ```
 
-`! 数组逆序`
+`! 指向整型数组的指针数组`
+
+```c
+int arr1[] = {1, 2, 3};
+int arr2[] = {4, 5, 6};
+int arr3[] = {7, 8, 9};
+int *arr[] = {arr1, arr2, arr3};
+```
+
+`! 动态分配内存的指针数组`
+
+```c
+#include <stdlib.h>
+
+int arr_out = 3;  
+int arr_in = 3;  
+
+int **arr = (int **)malloc(arr_out * sizeof(int *)); 
+
+if (arr == NULL) { -- do while  
+    return 1;
+}
+
+for (int i = 0; i < arr_out; i++) {  
+    
+    arr[i] = (int *)malloc(arr_in * sizeof(int)); 
+    
+    if (arr[i] == NULL) {
+    	for (j = 0; j < i; j++) {
+        	free(arr[j]);
+        }
+        free(arr);
+        return 1;
+    }
+    
+    for (int j = 0; j < arr_in; j++) { -- 赋值
+        arr[i][j] = i + j;  
+    }  
+}  
+
+for (int i = 0; i < arr_out; i++) {  
+    free(arr[i]);  
+}  
+
+free(arr); 
+```
+
+`! 整型指针数组`
+
+```c
+int arr[5] = {};
+int* p = arr;
+```
+
+`? 数组逆序`
 
 ```c
 bool reverseArr(int arr[], int size) {  
@@ -1321,7 +1377,7 @@ bool reverseArr(int arr[], int size) {
 }
 ```
 
-`! Fibonacci`
+`? Fibonacci`
 
 ```c
 int main(){ -- 30 以下迭代
@@ -1386,7 +1442,7 @@ bool fun(int a[],int size){
 }
 ```
 
-`! 最值和最值下标`
+`? 最值和最值下标`
 
 ```c
 int a[4] = {1, 2, 3, 4};
@@ -1399,7 +1455,7 @@ for(int i = 1; i <= 4; i++){
 }
 ```
 
-`! 不重复随机数`
+`? 不重复随机数`
 
 ```c
 #include<stdlib.h>
@@ -1469,6 +1525,18 @@ int printPascalTriangle(int n){
 }
 ```
 
+`? 指针数组 vs 二维数组`
+
+`char *args[] 指针数组 每个元素都是一个指向数组的指针 而 二维数组是一个数组的数组每个元素本身又是一个数组`
+
+```c
+int arr1[2] = {1, 2};
+int arr2[2][2] = { {1, 2}, arr1[0], arr1[1] }; -- i i + 1 j + 1 k + 1 000000974A7FF990 000000974A7FF998 000000974A7FF994 000000974A7FF994
+int (*i)[2] = arr2; -- 指向具有 2 个int元素的数组的指针
+int* j = arr2[0]; -- 指向 int 的指针指向第一行 与 int j = arr2 等价
+int* k = &arr2[0][0]; -- 指向二维数组元素的指针 00000026297FF7A0 00000026297FF7A0 00000026297FF7A0
+```
+
 
 
 `静态数组与动态数组`
@@ -1523,74 +1591,6 @@ free(arr);
 
 `? 生命周期
 静态数组的生命周期与存储类型相关 而动态数组的生命周期由程序员控制` `动态数组的使用需要注意内存管理的问题 确保在不再需要使用数组时释放内存 以避免内存泄漏和访问无效内存的问题`
-
-`? 数组指针 指针数组` 
-
-`指针数组: 指针数组是一个数组 数组元素是指针可以指向不同的内存位置 数组指针: 数组指针是指针 指向数组 数组中的元素在内存中连续` `是 …… 看 after `
-
-`! 字符串数组` `字符指针数组`
-
-```c
-char *args[] = { "html", "css", "javascript" }; 
-```
-
-`! 指向整型数组的指针数组`
-
-```c
-int arr1[] = {1, 2, 3};
-int arr2[] = {4, 5, 6};
-int arr3[] = {7, 8, 9};
-int *arr[] = {arr1, arr2, arr3};
-```
-
-`! 动态分配内存的指针数组`
-
-```c
-#include <stdlib.h>
-
-int arr_out = 3;  
-int arr_in = 3;  
-
-int **arr = (int **)malloc(arr_out * sizeof(int *)); 
-
-if (arr == NULL) { -- do while  
-    return 1;
-}
-
-for (int i = 0; i < arr_out; i++) {  
-    
-    arr[i] = (int *)malloc(arr_in * sizeof(int)); 
-    
-    if (arr[i] == NULL) {
-    	for (j = 0; j < i; j++) {
-        	free(arr[j]);
-        }
-        free(arr);
-        return 1;
-    }
-    
-    for (int j = 0; j < arr_in; j++) { -- 赋值
-        arr[i][j] = i + j;  
-    }  
-}  
-
-for (int i = 0; i < arr_out; i++) {  
-    free(arr[i]);  
-}  
-
-free(arr); 
-```
-
-`! 整型指针数组`
-
-```c
-int arr[5] = {};
-int* p = arr;
-```
-
-`? 指针数组 vs 二维数组`
-
-`char *args[] 指针数组 每个元素都是一个指向数组的指针 而 二维数组是一个数组的数组每个元素本身又是一个数组`
 
 
 
