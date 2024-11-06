@@ -341,9 +341,7 @@ int ks = sizeof(s1 + s2); -- 4
 
 `? typedef`
 
-`其作用是为一种数据类型定义一个新的名字 包括内部数据类型和自定义数据类型`
-
-`typedef unsigned long Ul` `Ul ul1 即 unsigned long ul1` `大写字母提醒是类型`
+`为一种数据类型定义一个新的名字` `typedef unsigned long Ul` `Ul ul1 即 unsigned long ul1` `大写字母提醒是类型`
 
 
 
@@ -458,7 +456,7 @@ int ks = sizeof(s1 + s2); -- 4
 
 `? 块作用域 Block SCOPE`
 
-`块作用域是指变量在代码块内有效在该代码块外部不可见的范围 函数块 代码块 条件块 循环块`
+`块作用域决定了白变量在程序中的可见性 函数块 代码块 条件块 循环块` `生命周期指变量在内存中存在时间段`
 
 `! 9 * 9`
 
