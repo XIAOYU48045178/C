@@ -372,11 +372,11 @@ int ks = sizeof(s1 + s2); -- 4
 #define MAX(n1, n2) ((n1) > (n2) ? (n2) : (n2))
 ```
 
-`! #define vs const`
+`? const vs #define `
 
 `#define 定义的常量在编译时会被直接替换为其对应的` `#define 定义的常量没有作用域限制它在定义之后的整个代码中都有效 而 const 定义的常量具有块级作用域 只在其定义所在的作用域内有效` `宏常量的运算在预处理展开时就完成性能好 const 在运行时发生有一定性能开销 const 定义的常量会在符号表中有相应的条目有助于调试和可读性`
 
-`! typedef vs #define`
+`? typedef vs #define`
 
 `typedef 仅限于为类型定义符号名称 #define 不仅可以为类型定义别名也能为数值定义别名 比如您可以定义 1 为 ONE` `typedef 是由编译器执行解释的 #define 语句是由预编译器进行处理的 `
 
@@ -1884,6 +1884,10 @@ int main() {
 **结构体嵌套
 
 
+
+
+
+`field`
 
 
 
