@@ -312,7 +312,7 @@ int main() {
 
 `? sizeof`
 
-`sizeof 是一个操作符 确定变量、对象、类型所占的内存大小 以字节为单位 sizeof 的结果是一个编译时常量其值在编译时就已确定`
+`sizeof 是一个操作符 确定变量、对象、类型所占的内存大小 以字节为单位 sizeof 的结果是一个编译时常量其值在编译时就已确定` `sizeof 不可以运算 field 的成员变量`
 
 ```c
 sizeof(int)
@@ -340,7 +340,7 @@ int ks = sizeof(s1 + s2); -- 4
 
 `? typedef`
 
-`为一种数据类型定义一个新的名字` `typedef unsigned long Ul` `Ul ul1 即 unsigned long ul1` `大写字母提醒是类型`
+`为一种数据类型定义一个新的名字` `typedef unsigned long Ul;` `Ul ul1 即 unsigned long ul1` `大写字母提醒是类型`
 
 
 
@@ -1823,13 +1823,23 @@ int main() {
 
 `? 结构体指针: 结构体指针是指针 指向结构体`
 
+```c
+struct Class{
+    int i1;
+}  class1 = {10}, *class2 = &class1;
+```
 
+`? 结构体做函数参数`
 
-结构体做函数参数
+```c
+int function(struct Class class){}
+```
 
+`? 结构体数组`
 
-
-结构体数组
+```c
+struct Class arr[2] = {1, 2};
+```
 
 `? 结构体内存对齐的规则 即 结构体字节数`
 
@@ -1837,11 +1847,49 @@ int main() {
 
 `? 结构体嵌套`
 
+```c
+struct Class1{
+    int i1;
 
+}  class1 = {10}, *class2 = &class1;
+
+struct Class2{
+    struct Class1 class3;
+    struct Class1* class4;
+};
+```
+
+`? 别名`
+
+```c
+typedef struct Class{
+    int i1;
+} Class1, Class2;
+```
 
 
 
 `field`
+
+---
+
+`位域 位段 bit-field 一种特殊的结构体成员 允许按位对成员进行定义 指定其占用的位数 如在存放一个开关量时 只有 0 和 1 两种状态 用 1 位二进位即可` `位域必须为整数类型 字符 枚举` `可以单独使用 也可以与其他成员一起组成结构体` `位域可能并不占用连续的内存空间 不能将位域成员的地址作为函数参数传递` `宽度不能超过其数据类型的大小` `位域可以是无名位域 即 空域 它只用来作填充或调整位置是不能使用的`
+
+`结构最小将占用 4 个字节的内存空间 如果您用了 32 个变量 每一个变量宽度为 1 位 占 4 个字节 但只要您再多一个变量 将分配内存的下一段来存储第 33 个变量 这个时候就开始占用 8 个字节` `出现不同类型无论是否为 field 如 整型 字符型 整型 占 12 字节 或者 字符型 整型 字符型 占 12 字节`
+
+```c
+struct Bit{
+    unsigned int i; -- 正确 sizeof(status.i)
+    unsigned int is0 : 1; -- 错误 sizeof(status.is0)
+    unsigned int is1 : 1;
+    unsigned int is2 : 2;
+    unsigned int is3 : 2;
+    unsigned int is4 : 3;
+    unsigned int :23;
+    unsigned int isi : 32;
+    unsigned long long isll : 33;
+} bit;
+```
 
 
 
