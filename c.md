@@ -1936,4 +1936,188 @@ int main() {
 
 
 
+`file`
 
+---
+
+`一个文件 无论它是文本文件还是二进制文件 都是代表了一系列的字节 C 语言不仅提供了访问顶层的函数 也提供了底层 OS 调用来处理存储设备上的文件`
+
+`? fopen`
+
+`函数原型 FILE *fopen( const char *filename, const char *mode )`
+
+`fopen 函数来创建一个新的文件或者打开一个已有的文件 这个调用会初始化类型 FILE 的一个对象 类型 FILE 包含了所有用来控制流的必要的信息` 
+
+`r`  `打开一个已有的文本文件 读取文件
+w`  `打开一个文本文件 文件不存在则创建文件 文件存在清空写入
+a`  `打开一个文本文件 文件不存在则创建文件 文件存在追加模式写入文件 
+r+` `打开一个文本文件 读写文件 覆盖写入 打开不存在的文件 fopen 将返回 NULL 并且设置 errno 为 ENOENT 表示文件不存在
+w+` `打开一个文本文件 读写文件 文件不存在则创建文件 文件存在则清空写入
+a+` `打开一个文本文件 读写文件 文件不存在则创建文件 文件存在则追加写入 读取从文件的开头开始`
+
+`如果处理的是二进制文件 则需使用下面的访问模式来取代上面的访问模式` `"rb" "wb" "ab" "rb+" "r+b" "wb+" "w+b" "ab+" "a+b"`
+
+`? fclose`
+
+`函数原型 int fclose( FILE *fp )`
+
+`如果成功关闭文件 fclose 函数返回零 如果关闭文件时发生错误 函数返回 EOF` `实际上这个函数会清空缓冲区中的数据关闭文件并释放用于该文件的所有内存` `EOF 是一个定义在头文件 stdio.h 中的常量`
+
+`? 写入文件` `请确保您有目录 如果不存在该目录 则需要在您的计算机上先创建该目录`
+
+`! 函数原型 int fputc( int c, FILE *fp )`
+
+`函数 fputc 把参数 c 的字符值写入到 fp 所指向的输出流中 如果写入成功返回写入的字符 如果发生错误则会返回 EOF 您可以使用下面的函数来把一个以 null 结尾的字符串写入到流中`
+
+`! 函数原型 int fputs( const char *s, FILE *fp )`
+
+`函数 fputs 把字符串 s 写入到 fp 所指向的输出流中 如果写入成功它会返回一个非负值 发生错误则返回 EOF`
+
+`! 函数原型 int fprintf(FILE *fp,const char *format, ...)`
+
+`函数把一个字符串写入到文件中`
+
+```c
+int main(){
+    FILE *fp = NULL;
+    fp = fopen("./1.txt", "w+");
+    fprintf(fp, "XIAOYU");
+    fputs("XiaoYu", fp);
+    fclose(fp);
+    return 0;
+}
+```
+
+`? 读取文件`
+
+`! 函数原型 int fgetc( FILE * fp )`
+
+`从文件读取单个字符的最简单的函数` `fgetc 函数从 fp 所指向的输入文件中读取一个字符 如果读取成功返回值是读取的字符 如果发生错误则返回 EOF`
+
+`! 函数原型 char *fgets( char *buf, int n, FILE *fp )`
+
+`函数 fgets 从 fp 指向的输入流中读取 n - 1 个字符 它会把读取的字符串复制到缓冲区 buf 并在最后追加一个 null 字符来终止字符串` `如果这个函数在读取最后一个字符之前就遇到一个换行符 '\n' 或文件的末尾 EOF 则只会返回读取到的字符 包括换行符`
+
+`! 函数原型 int fscanf(FILE *fp, const char *format, ...) `
+
+ `函数来从文件中读取字符串 但是在遇到第一个空格和换行符时会停止读取`
+
+```c
+int main(){
+    FILE *fp = NULL;
+    char buff[255] = {};
+    fp = fopen("./1.txt", "r");
+    fscanf(fp, "%s", buff);
+    fgets(buff, 255, (FILE*)fp);
+    fgets(buff, 255, (FILE*)fp);
+    fclose(fp);
+    return 0;
+}
+```
+
+`? 二进制 I/O 函数` `这两个函数都是用于存储块的读写通常是数组或结构体`
+
+`! 函数原型 size_t fread(void *ptr, size_t size_of_elements, size_t number_of_elements, FILE *a_file)`
+
+`!函数原型 size_t fwrite(const void *ptr, size_t size_of_elements, size_t number_of_elements, FILE *a_file)`
+
+
+
+```
+错误处理
+C 语言不提供对错误处理的直接支持 但是作为一种系统编程语言 它以返回值的形式允许您访问底层数据 在发生错误时 大多数的 C 或 UNIX 函数调用返回 1 或 NULL 同时会设置一个错误代码 errno 该错误代码是全局变量 表示在函数调用期间发生了错误 您可以在 errno.h 头文件中找到各种各样的错误代码
+所以 C 程序员可以通过检查返回值 然后根据返回值决定采取哪种适当的动作 开发人员应该在程序初始化时 把 errno 设置为 0 这是一种良好的编程习惯 0 值表示程序中没有错误
+```
+
+errno、perror() 和 strerror()
+
+C 语言提供了 perror() 和 strerror() 函数来显示与 errno 相关的文本消息 
+
+perror() 函数显示您传给它的字符串 后跟一个冒号、一个空格和当前 errno 值的文本表示形式 
+strerror() 函数 返回一个指针 指针指向当前 errno 值的文本表示形式 
+让我们来模拟一种错误情况 尝试打开一个不存在的文件 您可以使用多种方式来输出错误消息 在这里我们使用函数来演示用法 另外有一点需要注意 您应该使用 stderr 文件流来输出所有的错误 
+
+```c
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
+ 
+extern int errno ;
+ 
+int main ()
+{
+   FILE * pf;
+   int errnum;
+   pf = fopen ("unexist.txt", "rb");
+   if (pf == NULL)
+   {
+      errnum = errno;
+      fprintf(stderr, "错误号: %d\n", errno);
+      perror("通过 perror 输出错误");
+      fprintf(stderr, "打开文件错误: %s\n", strerror( errnum ));
+   }
+   else
+   {
+      fclose (pf);
+   }
+   return 0;
+}
+当上面的代码被编译和执行时 它会产生下列结果：
+
+错误号: 2
+通过 perror 输出错误: No such file or directory
+打开文件错误: No such file or directory
+被零除的错误
+在进行除法运算时 如果不检查除数是否为零 则会导致一个运行时错误 
+
+为了避免这种情况发生 下面的代码在进行除法运算前会先检查除数是否为零：
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+ 
+int main()
+{
+   int dividend = 20;
+   int divisor = 0;
+   int quotient;
+ 
+   if( divisor == 0){
+      fprintf(stderr, "除数为 0 退出运行...\n");
+      exit(-1);
+   }
+   quotient = dividend / divisor;
+   fprintf(stderr, "quotient 变量的值为 : %d\n", quotient );
+ 
+   exit(0);
+}
+当上面的代码被编译和执行时 它会产生下列结果：
+
+除数为 0 退出运行...
+程序退出状态
+通常情况下 程序成功执行完一个操作正常退出的时候会带有值 EXIT_SUCCESS 在这里 EXIT_SUCCESS 是宏 它被定义为 0 
+
+如果程序中存在一种错误情况 当您退出程序时 会带有状态值 EXIT_FAILURE 被定义为 -1 所以 上面的程序可以写成：
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+ 
+int main()
+{
+   int dividend = 20;
+   int divisor = 5;
+   int quotient;
+ 
+   if( divisor == 0){
+      fprintf(stderr, "除数为 0 退出运行...\n");
+      exit(EXIT_FAILURE);
+   }
+   quotient = dividend / divisor;
+   fprintf(stderr, "quotient 变量的值为: %d\n", quotient );
+ 
+   exit(EXIT_SUCCESS);
+}
+当上面的代码被编译和执行时 它会产生下列结果：
+
+quotient 变量的值为 : 4
