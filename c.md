@@ -749,6 +749,23 @@ i2 % 10; i2 / 10 % 10; i2 / 100 % 10;
 i3 % 10; i3 / 10 % 10; i3 / 100 % 10; i3 / 1000 % 10;
 ```
 
+`!! 水仙花 100~999`
+
+```c
+int narcissus(){
+	int i = 100, i3 = 0, i2 = 0, i1 = 0;
+	for(i; i <= 999; ++i){
+		i3 = i / 100 % 10;
+		i2 = i / 10 % 10;
+		i1 = i % 10;
+		if(i3 * i3 * i3 + i2 * i2 * i2 + i1 * i1 *i1 == i){
+            -- i
+        }
+	}	
+    return 0;
+}
+```
+
 `? 浮点型` 
 
 `float 4 字节 32 位 精度: 6 ~ 7 范围约为: 有符号 -3.4E-38 ~ 3.4E+38 存储: 1 位符号 8 位指数 23 位小数` `float i = 2.1f`
@@ -2106,11 +2123,11 @@ int main(){
 
 
 
-`io.h` `include<stdio.h>`
+`io.h` `include <stdio.h>`
 
 ---
 
-` ? printf` `函数原型 int printf(const char *format, ...)`
+` ? printf` `格式化输出函数` `函数原型 int printf(const char *format, ...)`
 
 `! 格式字符` `放最后`
 
@@ -2157,7 +2174,7 @@ int main(){
 
 `! 返回值 如果成功则返回写入的字符总数 失败返回一个负数`
 
-`? scanf` `函数原型 int scanf(const char *format, ...) ` `阻塞 外界到程序`
+`? scanf` `格式化输入函数` `函数原型 int scanf(const char *format, ...) ` `阻塞 外界到程序`
 
 `! 格式字符` `放最后`
 
@@ -2183,33 +2200,69 @@ int main(){
 
 `i 数字 指定了在当前读取操作中读取的最大字符数`
 
-`! 如果成功该函数返回成功匹配和赋值的个数 如果到达文件末尾或发生读错误则返回 EOF`
+`! 返回值 如果成功该函数返回成功匹配和赋值的个数 如果到达文件末尾或发生读错误则返回 EOF`
 
 
 
+`string.h` `include <string.h>`
+
+---
+
+`? strcat` `字符串连接函数` `函数原型 char *strcat(char *dest, const char *src)`
+
+`！dest 指向目标数组 该数组大小足够容纳追加后的字符串`
+
+`！src 指向要追加的字符串`
+
+`! 返回值 该函数返回一个指向最终的目标字符串 dest 的指针`
+
+`? strcmp` `字符串比较函数 逐字符比较 ASCII` `函数原型 int strcmp(const char *str1, const char *str2)`
+
+`! str1 要进行比较的第一个字符串`
+
+`! str2 要进行比较的第二个字符串`
+
+`! 返回值` `如果返回值小于 0 则表示 str1 小于 str2` `如果返回值大于 0 则表示 str1 大于 str2` `如果返回值等于 0 则表示 str1 等于 str2`
+
+`? strcpy` `字符串复制函数` `函数原型 char *strcpy(char *dest, const char *src)`
+
+`! dest 指向用于存储复制内容的目标数组`
+
+`! src 要复制的字符串`
+
+`! 返回值 该函数返回一个指向最终的目标字符串 dest 的指针`
+
+`? strlen` `字符串长度计算函数` `函数原型 size_t strlen(const char *str)`
+
+`! str 要计算长度的字符串`
+
+`! 返回值 该函数返回字符串的长度`
 
 
 
+`lib.h` `include <stdlib.h>`
 
+---
 
+`? atio` `字符串转整数数字函数` `函数原型 int atoi(const char *str)`
 
+`! str 要转换为整数的字符串`
 
+`! 返回值 该函数返回转换后的长整数 如果没有执行有效的转换则返回零`
 
+`? malloc` `动态分配内存空间函数` `函数原型 void *malloc(size_t size)`
 
+`! size 内存块的大小以字节为单位`
 
+`! 返回值 函数返回一个指针指向已分配大小的内存 如果请求失败则返回 NULL`
 
+`? free` `释放动态分配的内存的函数` `函数原型 void free(void *ptr)`
 
+`! ptr 指针指向一个要释放内存的内存块 该内存块之前是通过调用 malloc、calloc、realloc 进行分配内存的 如果传递的参数是一个空指针则不会执行任何动作`
 
+`? exit` `立即终止调用进程 任何属于该进程的打开的文件描述符都会被关闭 该进程的子进程由进程 1 继承初始化 且会向父进程发送一个 SIGCHLD 信号` `函数原型 void exit(int status)`
 
-
-
-
-
-
-
-
-
-
+`! status 给父进程的状态值`
 
 
 
