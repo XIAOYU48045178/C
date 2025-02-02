@@ -1,0 +1,516 @@
+```c
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <fcntl.h> 
+#include <unistd.h>
+#include <time.h>
+
+#define TTY_PATH  "/dev/tty"
+#define STTY_US  "stty raw -echo -F "
+#define STTY_DEF  "stty -raw echo -F "
+
+#define WIDTH 15
+#define HEIGHT 20
+
+
+int i1 = 0, i2 = 0;
+
+int sIndex = 0;
+
+int interface[HEIGHT][WIDTH] = {};
+
+int downSpeed = 5;
+
+int score = 0;
+int level = 1;
+
+
+/**
+* 坐标结构体
+*
+*/
+typedef struct{
+	int i1;
+	int i2;
+}Point;
+
+
+/**
+* 图形数组初始化
+*
+* 
+*/
+Point s[19][4] = {
+    {{0,0},{-1,-1},{-1,0},{0,-1}}, // 方块  
+    {{0,0},{-1,0},{1,0},{2,0}}, // 横条    
+    {{0,0},{0,-1},{0,1},{0,2}}, // 竖条    
+    {{0,0},{0,-1},{0,-2},{1,0}}, // 正L1    
+    {{0,0},{0,1},{1,0},{2,0}}, // 正L2
+    {{0,0},{-1,0},{0,1},{0,2}}, // 正L3    
+    {{0,0},{0,-1},{-1,0},{-2,0}}, // 正L4    
+    {{0,0},{-1,0},{0,-1},{0,-2}}, // 反L1    
+    {{0,0},{0,-1},{1,0},{2,0}}, // 反L2    
+    {{0,0},{1,0},{0,1},{0,2}}, // 反L3    
+    {{0,0},{-1,0},{-2,0},{0,1}}, // 反L4    
+    {{0,0},{-1,0},{1,0},{0,-1}}, // T1    
+    {{0,0},{0,1},{0,-1},{1,0}}, // T2    
+    {{0,0},{-1,0},{1,0},{0,1}}, // T3    
+    {{0,0},{-1,0},{0,-1},{0,1}}, // T4    
+    {{0,0},{1,0},{0,-1},{-1,-1}}, // 正Z1    
+    {{0,0},{1,-1},{0,1},{1,0}}, // 正Z2    
+    {{0,0},{1,-1},{-1,0},{0,-1}}, // 反Z1    
+    {{0,0},{-1,-1},{-1,0},{0,1}} // 反Z2
+};
+
+
+/**
+* 创建图形
+*
+*/
+int creat_s(){	
+
+	sIndex = rand() % 19;
+	i1 = WIDTH / 2;
+	i2 = 2;
+
+	return 0;
+}
+
+
+/**
+* 自定义非阻塞输入函数
+*
+*/
+int getC()	
+{
+    fd_set rfds;
+    struct timeval tv;
+    int ch = 0;
+    FD_ZERO(&rfds);
+    FD_SET(0, &rfds);
+    tv.tv_sec = 0;
+    tv.tv_usec = 10; 
+    if (select(1, &rfds, NULL, NULL, &tv) > 0)
+    {
+        ch = getchar(); // 系统非阻塞输入
+    }
+    return ch;
+}
+
+
+/**
+* 打印　１　方块
+*
+* i1 : 横坐标
+* i2 : 纵轴坐标
+*/
+int drawPrint(int i1, int i2){
+
+	printf("\033[%d;%dH", i2+1, i1*2+1); // 移动光标
+
+	printf("\033[1;36m￥\033[0m"); // 打印方块
+
+    	printf("\033[%d;%dH",24,0);
+    	printf("\033[0;34m Level:%d Score:%d\033[0m ",level,score);
+
+	return 1;
+}
+
+
+/**
+* 初始化界面数据
+*
+*/
+int initInterface(){
+	int i = 0;
+	for(i; i < WIDTH; ++i){
+		interface[0][i]	= 2;
+		interface[HEIGHT - 1][i] = 2;	
+	}
+	for(i = 1; i < HEIGHT - 1; ++i){
+		interface[i][0]	= 2;
+		interface[i][WIDTH - 1] = 2;	
+	}
+	return 0;
+}
+
+
+/**
+* 初始化界面
+*
+*/
+int drawInterface(){
+	int i = 0;
+	for(i; i < HEIGHT; ++i){
+		int j = 0;
+		for(j; j < WIDTH; ++j){
+			if(interface[i][j] > 0){
+
+				drawPrint(j,i);
+
+			}
+		}
+	}
+	return 0;
+}
+
+
+
+
+
+/**
+*　变形函数 sIndex
+*
+*
+*/
+int deformation(){
+
+	int autoIndex = sIndex;
+
+	autoIndex = autoIndex ? ++autoIndex : autoIndex;
+	autoIndex = autoIndex == 3 ? 1 : autoIndex;
+	autoIndex = autoIndex == 7 ? 3 : autoIndex;
+	autoIndex = autoIndex == 11 ? 7 : autoIndex;
+	autoIndex = autoIndex == 15 ? 11 : autoIndex;
+	autoIndex = autoIndex == 17 ? 15 : autoIndex;
+	autoIndex = autoIndex == 19 ? 17 : autoIndex;
+	
+
+	if(deformationJudge(autoIndex)){
+		sIndex = autoIndex;
+
+	}
+
+	return 1;
+}
+
+
+/**
+*　变形碰撞检测
+*
+*
+*/
+int deformationJudge(int judge){
+
+	int i = 0;
+	for(i; i < 4; ++i){
+		int li1 = 0, li2 = 0;
+
+		li1 = i1 + s[judge][i].i1;
+		li2 = i2 + s[judge][i].i2;
+
+		if(interface[li2][li1] > 0){
+			return 0;
+		}
+	}
+
+	return 1;	
+}
+
+
+
+
+/**
+* 方块移动函数
+*
+* in : 输入　Ｗ A S D
+*/
+int moveCtrl(char in){
+	
+	switch(in){
+		case 'W': case 'w': 
+			deformation(); break;
+
+		case 'S': case 's': 
+			break;
+
+		case 'A': case 'a': 
+			left(); break;
+
+		case 'D': case 'd': 
+			right(); break;
+	}
+	return 1;
+}
+
+
+
+/**
+* left 边界判定函数
+*
+* 
+*/
+int left(){
+
+	int i = 0;
+	for(i; i < 4; ++i){
+		int li1 = 0, li2 = 0;
+		li1 = i1 + s[sIndex][i].i1 - 1;
+		li2 = i2 + s[sIndex][i].i2;
+		if(interface[li2][li1] > 0){
+			return 0;
+		}
+	}
+	--i1;
+
+	return 0;
+}
+
+
+
+/**
+* right 边界判定函数
+*
+* 
+*/
+int right(){
+
+	int i = 0;
+	for(i; i < 4; ++i){
+		int li1 = 0, li2 = 0;
+		li1 = i1 + s[sIndex][i].i1 + 1;
+		li2 = i2 + s[sIndex][i].i2;
+		if(interface[li2][li1] > 0){
+			return 0;
+		}
+	}
+	++i1;
+	return 1;
+}
+
+
+
+/**
+* 边界判定函数
+*
+* 
+*/
+int speedCnt = 0;
+int down(){
+
+	if(++speedCnt < downSpeed){
+		return 0;
+	}
+
+	speedCnt = 0;
+
+	int i = 0;
+	for(i; i < 4; ++i){
+		int li1 = 0, li2 = 0;
+		li1 = i1 + s[sIndex][i].i1;
+		li2 = i2 + s[sIndex][i].i2 + 1;
+		if(interface[li2][li1] > 0){
+			statics();
+
+			//
+			clsLines();
+			creat_s();
+			return 0;
+		}
+	}
+	++i2;
+
+	return 0;
+}
+
+/**
+* 检测是否满行
+*
+* 
+*/
+
+int isFull(int line){
+
+	int i = 1;
+	for(i; i < WIDTH - 1; ++i){
+		if(interface[line][i] == 0){
+			return 0;
+		}
+	}
+
+	return 1;
+}
+
+/*
+int isFull(int line){
+
+	int i = HEIGHT - 1;
+
+	for(i; i > 0; --i){
+		int j = 1;
+		for(j; j < WIDTH - 1; ++j){
+			if(interface[i][j] == 0){
+				return 0;
+				int k = 1;
+				for(k = 1; k < WIDTH - 1; ++k){
+					
+					interface[i][k] = 0;
+				}
+
+			}
+					
+		}
+
+
+	}
+
+	return 1;
+}
+*/
+
+
+/**
+* 
+*
+* 
+*/
+int clsLines(){
+	int i = HEIGHT - 2;
+	int cnt = 0;
+
+	for(i; i > 0; --i){
+		if(isFull(i)){
+			++cnt;
+		}else if(cnt > 0){
+			moveLine(i, i + cnt);
+		}
+		
+	}
+	score = 100 * cnt + score;
+	addlevel();
+	return 0;
+}
+
+
+int addlevel(){
+	if(score >= 500 && level == 1){
+		level = 2;
+	}else if(score >= 1000 && level == 2){
+		level = 3;
+	}
+	return 0;
+}
+
+
+
+/**
+* 
+*
+* 
+*/
+int moveLine(int src, int desc){
+	int i = 0;
+	for(i = 1; i < WIDTH; ++i){
+		interface[desc][i] = interface[src][i];
+		interface[src][i] = 0;
+	}
+	return 0;
+}
+
+
+
+/**
+* 画图函数
+*
+* 
+*/
+int draw(){
+
+	int i = 0;
+
+	for(i; i < 4; ++i){
+		int li1 = 0, li2 = 0;
+		li1 = i1 + s[sIndex][i].i1;
+		li2 = i2 + s[sIndex][i].i2;
+		drawPrint(li1,li2);
+	}
+
+
+	return 1;
+}
+
+
+/**
+* static s
+*
+* 
+*/
+int statics(){
+	int i = 0;
+	for(i; i < 4; ++i){
+		int li1 = 0, li2 = 0;
+		li1 = i1 + s[sIndex][i].i1;
+		li2 = i2 + s[sIndex][i].i2;
+		interface[li2][li1] = 1;	
+		
+	}
+	return 0;
+}
+
+
+/**
+* 1 GAME OVER
+*
+* 
+*/
+int isOvrer(){
+	int j = 1;
+	for(j; j < WIDTH - 2 + 1; ++j){
+		if(interface[1][j]){
+			return 1;
+		}
+	}
+	return 0;
+}
+
+
+int main(){
+
+   	//屏蔽掉终端的正常输入
+	system(STTY_US TTY_PATH);
+
+	initInterface();
+
+	srand(time(0));	
+
+	creat_s();
+	
+	while(1)
+	{
+		char c = getC();
+
+		if(c == 3 || c == 3 - 32) // ctrl+c 的 ascii = 3
+		{
+            		//让终端的输入恢复正常
+			system(STTY_DEF TTY_PATH);
+			break;
+		}
+
+		if(isOvrer()){
+			printf("\033[%d;%dH",10,5);// 将光标移到到 10 行 5 列的位置
+			printf("\033[44;31mGAME OVER!\033[0m ");
+			fflush(stdout);
+			system(STTY_DEF TTY_PATH);    // 恢复非阻塞 IO 设置
+			printf("\033[%d;%dH",27,0);// 将光标移到到 27 行 0 列的位置
+			sleep(3);
+            return 0;
+		}
+		
+		drawInterface();
+
+		draw();
+
+		down();
+
+		moveCtrl(c);
+
+		fflush(stdout);
+
+		usleep(80*1000);
+
+		system("clear");
+	}
+	return 0;
+}
+```
+
